@@ -1,6 +1,6 @@
 <template x-if="block.type === 'post_grid'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
 
         <div class="row align-items-center mb-3">
             <div class="col-md-6 mb-2">
@@ -45,9 +45,17 @@
             
             <div class="col-md-6 mb-2 mt-2">
                 <label class="form-label small fw-bold text-muted mb-1">Màu chữ cho Tiêu đề bài viết</label>
-                <div class="d-flex align-items-center gap-2">
-                    <input type="color" x-model="block.content.text_color" class="form-control form-control-color border-0 bg-light p-1" style="width: 50px;">
-                    <input type="text" x-model="block.content.text_color" class="form-control border-0 bg-light w-50" placeholder="#004a80">
+                <div class="d-flex align-items-center bg-light rounded-3 p-1 px-2 border">
+                    <input type="color" x-model="block.content.text_color" class="form-control-color border-0 bg-transparent p-0" style="width: 24px; height: 24px;">
+                    <input type="text" x-model="block.content.text_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-2 flex-grow-1" placeholder="#004a80">
+                    <div class="d-flex gap-1">
+                        <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(block.content.text_color)" title="Copy màu">
+                            <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(block.content, 'text_color')" title="Dán màu">
+                            <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

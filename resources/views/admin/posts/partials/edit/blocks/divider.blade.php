@@ -1,6 +1,6 @@
 <template x-if="block.type === 'divider'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <hr
             :style="'border-color: ' + (block.content.color || '#e2e8f0') +
             '; border-width: ' + (block.content.thickness || 1) +

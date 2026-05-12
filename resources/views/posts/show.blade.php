@@ -15,11 +15,10 @@
             $content = $block->content;
         @endphp
         <section id="block-{{ $block->id }}"
-            class="block-section block-{{ $block->type }} {{ $block->type !== 'header' ? 'reveal' : 'sticky-top' }}"
-            style="{{ $block->style }};
-                    @if ($block->type === 'header') z-index: {{ 1020 - $loop->index }}; 
-                        top: {{ $stickyOffset }}px; @endif">
-            @if (!in_array($block->type, ['header', 'footer', 'hero_content']))
+            class="block-section block-{{ $block->type }} {{ $block->type !== 'header' ? 'reveal' : 'sticky-top' }}" style="{{ $block->style }};
+                                    @if ($block->type === 'header') z-index: {{ 1020 - $loop->index }}; 
+                                    top: {{ $stickyOffset }}px; @endif">
+            @if (!in_array($block->type, ['header', 'footer', 'hero_content', 'product_description']))
                 @includeIf('posts.partials.blocks.shared_title', ['content' => $content])
             @endif
             @if ($block->type === 'post_grid')
@@ -37,17 +36,17 @@
     @endforeach
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var offcanvasElements = document.querySelectorAll('.offcanvas');
-            offcanvasElements.forEach(function(el) {
-                el.addEventListener('show.bs.offcanvas', function() {
+            offcanvasElements.forEach(function (el) {
+                el.addEventListener('show.bs.offcanvas', function () {
                     var section = this.closest('section.block-header');
                     if (section) {
                         section.dataset.originalZIndex = section.style.zIndex;
                         section.style.setProperty('z-index', '1060', 'important');
                     }
                 });
-                el.addEventListener('hidden.bs.offcanvas', function() {
+                el.addEventListener('hidden.bs.offcanvas', function () {
                     var section = this.closest('section.block-header');
                     if (section) {
                         if (section.dataset.originalZIndex) {

@@ -68,7 +68,7 @@
 
 @section('scripts')
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://cdn.tiny.cloud/1/bfc0ulvfo0qc9sk6dj9lheh9hd2c4c78t2nys85amgq72h4r/tinymce/6/tinymce.min.js"
+    <script src="https://cdn.tiny.cloud/1/3lj129fowr521a21ymimv9qyjwxyzezc86feaj8brb3fetc0/tinymce/6/tinymce.min.js"
         referrerpolicy="origin"></script>
     <script>
         // Sửa lỗi không click/nhập được liệu ở Model TinyMCE khi dùng trong Bootstrap Modal
@@ -174,7 +174,7 @@
                     // Initialize Editors for existing text blocks delay
                     setTimeout(() => {
                         this.blocks.forEach((block, index) => {
-                            if (block.type === 'text') this.initEditor(index);
+                            if (block.type === 'text' || block.type === 'product_detail') this.initEditor(index);
                         });
                     }, 500);
                 },
@@ -244,6 +244,29 @@
                     });
                 },
 
+                initItemEditor(uid, fieldPath, itemObj) {
+                    if (typeof tinymce === 'undefined') return;
+                    const selector = `#editor-item-${uid}`;
+                    if (tinymce.get(`editor-item-${uid}`)) {
+                        tinymce.get(`editor-item-${uid}`).remove();
+                    }
+
+                    tinymce.init({
+                        selector: selector,
+                        height: 200,
+                        menubar: false,
+                        relative_urls: false,
+                        remove_script_host: false,
+                        plugins: ['advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview', 'code', 'wordcount', 'emoticons'],
+                        toolbar: 'undo redo | bold italic underline | forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image emoticons | code',
+                        setup: (editor) => {
+                            editor.on('Change KeyUp', (e) => {
+                                itemObj.content = editor.getContent();
+                            });
+                        }
+                    });
+                },
+
                 editBlock(index) {
                     const targetBlock = this.blocks[index];
 
@@ -278,12 +301,23 @@
                             zalo: ''
                         };
                     }
+                    if (this.editingBlock.type === 'product_category_grid') {
+                        // Initialize banner_images array if missing
+                        if (!this.editingBlock.content.banner_images) {
+                            this.editingBlock.content.banner_images = [];
+                        }
+                        // Migrate legacy single banner_image string to array format
+                        if (this.editingBlock.content.banner_image && this.editingBlock.content.banner_images.length === 0) {
+                            this.editingBlock.content.banner_images.push({ url: this.editingBlock.content.banner_image });
+                            delete this.editingBlock.content.banner_image;
+                        }
+                    }
 
                     const modal = new bootstrap.Modal(document.getElementById('editBlockModal'));
                     modal.show();
 
                     // Initialize tinymce if text block
-                    if (this.editingBlock.type === 'text') {
+                    if (this.editingBlock.type === 'text' || this.editingBlock.type === 'product_detail') {
                         setTimeout(() => this.initEditor('modal'), 150);
                     }
                 },
@@ -295,7 +329,7 @@
                     modal.hide();
 
                     // Cleanup TinyMCE if text block
-                    if (this.editingBlock.type === 'text' && typeof tinymce !== 'undefined') {
+                    if ((this.editingBlock.type === 'text' || this.editingBlock.type === 'product_detail') && typeof tinymce !== 'undefined') {
                         tinymce.get('editor-modal').remove();
                     }
                     this.editingBlock = null;
@@ -321,7 +355,13 @@
                         'contact_form': 'fas fa-envelope-open-text',
                         'product_category_grid': 'fas fa-th-list',
                         'post_grid': 'fas fa-border-all',
-                        'office_map': 'fas fa-map-marked-alt'
+                        'text_grid': 'fas fa-th',
+                        'office_map': 'fas fa-map-marked-alt',
+                        'product_detail': 'fas fa-box-open',
+                        'product_description': 'fas fa-file-alt',
+                        'coupons': 'fas fa-gift',
+                        'product_reviews': 'fas fa-star-half-alt',
+                        'registration': 'fas fa-file-signature'
                     };
                     return icons[type] || 'fas fa-cube';
                 },
@@ -346,7 +386,14 @@
                         'contact_form': 'Mẫu liên hệ',
                         'product_category_grid': 'Danh mục sản phẩm (Banner dọc)',
                         'post_grid': 'DS Bài viết / Danh mục',
-                        'office_map': 'Hệ thống văn phòng (Bản đồ)'
+                        'text_grid': 'Tin tức dạng lưới',
+                        'office_map': 'Hệ thống văn phòng (Bản đồ)',
+                        'contact_info_bar': 'Thanh liên hệ (Thông tin)',
+                        'product_detail': 'Chi tiết sản phẩm',
+                        'product_description': 'Mô tả chi tiết SP',
+                        'coupons': 'Mã giảm giá (Coupons)',
+                        'product_reviews': 'Đánh giá & Hỏi đáp',
+                        'registration': 'Mẫu Đăng ký'
                     };
                     return names[type] || type;
                 },
@@ -500,6 +547,20 @@
                                 btn_text: 'Xem chi tiết'
                             };
                             break;
+                        case 'product_description':
+                            defaultContent = {
+                                product_id: ''
+                            };
+                            break;
+                        case 'product_detail':
+                            defaultContent = {
+                                product_id: '',
+                                video_url: '',
+                                show_rating: true,
+                                show_sku: true,
+                                body: '<h4>LÊN ĐỜI LỐP MỚI, NHẬN KÈM QUÀ SIÊU HỜI</h4><p>1. Bộ checklist kiểm tra xe trước chuyến đi: 300K</p><p>2. Mẹo chăm xe hơi cho người bận rộn: 500K</p><strong>TỔNG TRỊ GIÁ: 1.200.000 ĐỒNG</strong>'
+                            };
+                            break;
                         case 'banner':
                             defaultContent = {
                                 items: [{
@@ -534,13 +595,27 @@
                                 category_id: '',
                                 banner_image: '',
                                 items_limit: 8,
-                                items_per_row: 4
+                                items_per_row: 4,
+                                btn_bg_color: '#00e5ff',
+                                btn_text_color: '#ffffff',
+                                btn_border_radius: 50
                             };
                             break;
                         case 'post_grid':
                             defaultContent = {
                                 category_id: '',
                                 items_per_page: 9,
+                                text_color: '#004a80'
+                            };
+                            break;
+                        case 'text_grid':
+                            defaultContent = {
+                                title: 'TIN TỨC MỚI NHẤT',
+                                category_id: '',
+                                items_limit: 6,
+                                columns: 3,
+                                show_date: true,
+                                show_summary: true,
                                 text_color: '#004a80'
                             };
                             break;
@@ -563,6 +638,63 @@
                                 }
                             };
                             break;
+                        case 'contact_info_bar':
+                            defaultContent = {
+                                items: [
+                                    {
+                                        uid: 'item_' + Date.now() + '_1',
+                                        icon_image: '',
+                                        content: "<b>Tư vấn chuyên sâu:</b>\nHotline:\n<span class='text-danger'>02383545886</span>",
+                                        width: 0
+                                    },
+                                    {
+                                        uid: 'item_' + Date.now() + '_2',
+                                        icon_image: '',
+                                        content: "<b>Hòm thư liên hệ:</b>\nEmail:\n<span class='text-danger'>linkcoins@gmail.com</span>",
+                                        width: 0
+                                    },
+                                    {
+                                        uid: 'item_' + Date.now() + '_3',
+                                        icon_image: '',
+                                        content: "<b>Địa chỉ liên hệ:</b>\nMiền Nam: Nhà máy Sailun: Lô 37-41, D11, KCN Phước Đông, Gò Dầu, Tây Ninh\nMiền Nam: Nhà máy Yokohama: số 17, Đ10, KCN VSIP, TP. Thuận An, Bình Dương",
+                                        width: 0
+                                    }
+                                ],
+                                btn_text: 'Cộng tác viên',
+                                btn_link: '#',
+                                btn_bg_color: '#00ffff',
+                                btn_text_color: '#000000',
+                                btn_border_radius: 0
+                            };
+                            break;
+                        case 'coupons':
+                            defaultContent = {
+                                title: 'ƯU ĐÃI LIÊN QUAN',
+                                coupon_ids: []
+                            };
+                            break;
+                        case 'product_reviews':
+                            defaultContent = {
+                                product_id: '',
+                                accent_color: '#C92127',
+                                title: 'ĐÁNH GIÁ SẢN PHẨM',
+                                qa_title: 'Hỏi và đáp',
+                                qa_info: 'Xin mời để lại câu hỏi, bên mình sẽ trả lời lại trong 1h, các câu hỏi sau 22h - 8h sẽ được trả lời vào sáng hôm sau'
+                            };
+                            break;
+                        case 'registration':
+                            defaultContent = {
+                                title: 'ĐĂNG KÝ TÀI KHOẢN',
+                                subtitle: 'Tham gia cùng cộng đồng Lốp Ô Tô Bình Minh để nhận ưu đãi đặc quyền và quản lý dịch vụ chuyên nghiệp.',
+                                button_label: 'Tạo tài khoản ngay',
+                                image: '',
+                                reverse_layout: false,
+                                accent_color: '#004a80',
+                                title_color: '#0f172a',
+                                btn_text_color: '#ffffff',
+                                redirect_to: ''
+                            };
+                            break;
                     }
                     this.blocks.push({
                         id: null,
@@ -572,7 +704,7 @@
                     });
 
                     // If text block, init editor after DOM update
-                    if (type === 'text') {
+                    if (type === 'text' || type === 'product_detail') {
                         const newIndex = this.blocks.length - 1;
                         setTimeout(() => this.initEditor(newIndex), 150);
                     }
@@ -599,7 +731,7 @@
                     this.blocks.splice(index + 1, 0, newBlock);
 
                     // Nếu là block văn bản, khởi tạo lại TinyMCE
-                    if (newBlock.type === 'text') {
+                    if (newBlock.type === 'text' || newBlock.type === 'product_detail') {
                         setTimeout(() => this.initEditor(index + 1), 150);
                     }
                 },
@@ -613,7 +745,7 @@
                         confirmButtonText: 'Xoá'
                     }).then(result => {
                         if (result.isConfirmed) {
-                            if (this.blocks[index].type === 'text' && typeof tinymce !== 'undefined') {
+                            if ((this.blocks[index].type === 'text' || this.blocks[index].type === 'product_detail') && typeof tinymce !== 'undefined') {
                                 tinymce.remove(`#editor-${index}`);
                             }
                             this.blocks.splice(index, 1);
@@ -650,6 +782,27 @@
                         });
                     } finally {
                         this.saving = false;
+                    }
+                },
+
+                copyColor(color) {
+                    if (!color) return;
+                    navigator.clipboard.writeText(color).then(() => {
+                        Toast.fire({ icon: 'success', title: 'Đã copy màu: ' + color });
+                    });
+                },
+
+                async pasteColor(obj, field) {
+                    try {
+                        const text = await navigator.clipboard.readText();
+                        if (/^#[0-9A-F]{6}$/i.test(text) || /^#[0-9A-F]{3}$/i.test(text)) {
+                            obj[field] = text;
+                            Toast.fire({ icon: 'success', title: 'Đã dán màu: ' + text });
+                        } else {
+                            Toast.fire({ icon: 'error', title: 'Mã màu không hợp lệ!' });
+                        }
+                    } catch (err) {
+                        Toast.fire({ icon: 'error', title: 'Không thể đọc clipboard!' });
                     }
                 }
             }

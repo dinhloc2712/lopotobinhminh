@@ -40,10 +40,17 @@
                             @include('admin.posts.partials.edit.blocks.spacer')
                             @include('admin.posts.partials.edit.blocks.divider')
                             @include('admin.posts.partials.edit.blocks.contact_form')
+                            @include('admin.posts.partials.edit.blocks.registration')
                             @include('admin.posts.partials.edit.blocks.banner')
-                            @include('admin.posts.partials.edit.blocks.product_category_grid')
+                             @include('admin.posts.partials.edit.blocks.product_category_grid')
                             @include('admin.posts.partials.edit.blocks.post_grid')
+                            @include('admin.posts.partials.edit.blocks.text_grid')
+                            @include('admin.posts.partials.edit.blocks.contact_info_bar')
                             @include('admin.posts.partials.edit.blocks.office_map')
+                            @include('admin.posts.partials.edit.blocks.product_detail')
+                            @include('admin.posts.partials.edit.blocks.product_description')
+                            @include('admin.posts.partials.edit.blocks.coupons')
+                            @include('admin.posts.partials.edit.blocks.product_reviews')
                         </div>
                     </div>
 

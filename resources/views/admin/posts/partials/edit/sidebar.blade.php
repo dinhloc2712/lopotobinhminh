@@ -12,6 +12,16 @@
                     style="font-size: 13px;"></i>
             </div>
             <div class="d-grid gap-2 custom-scrollbar p-1" style="max-height: 50vh; overflow-y: auto;">
+                <button @click="addBlock('text_grid')"
+                    x-show="'text grid tin tức dạng bài viết lưới block'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-th text-info me-2" style="width: 16px;"></i> Tin tức dạng lưới
+                </button>
+                <button @click="addBlock('contact_info_bar')"
+                    x-show="'contact info bar liên hệ hotline điện thoại địa chỉ button'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-id-card text-primary me-2" style="width: 16px;"></i> Thanh liên hệ
+                </button>
                 <button @click="addBlock('header')" x-show="'header điều hướng nav'.includes(search.toLowerCase())"
                     class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
                     <i class="fas fa-heading text-dark me-2" style="width: 16px;"></i> Header Điều hướng
@@ -40,11 +50,37 @@
                     class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
                     <i class="fas fa-columns text-info me-2" style="width: 16px;"></i> Bố cục (Grid)
                 </button>
+                <button @click="addBlock('product_detail')"
+                    x-show="'product detail chi tiết sản phẩm'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-box-open text-primary me-2" style="width: 16px;"></i> Chi tiết Sản phẩm
+                </button>
+                <button @click="addBlock('product_description')"
+                    x-show="'product description mô tả chi tiết sản phẩm'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-file-alt text-info me-2" style="width: 16px;"></i> Mô tả chi tiết SP
+                </button>
+                <button @click="addBlock('product_category_grid')"
+                    x-show="'product category danh mục sản phẩm banner dọc grid'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-th-list text-success me-2" style="width: 16px;"></i> Danh mục SP (Banner)
+                </button>
                 <button @click="addBlock('post_grid')"
                     x-show="'post grid danh sách bài viết danh mục tin tức'.includes(search.toLowerCase())"
                     class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
                     <i class="fas fa-border-all text-primary me-2" style="width: 16px;"></i> Danh sách Bài viết
                 </button>
+                <button @click="addBlock('coupons')"
+                    x-show="'coupons mã giảm giá khuyến mãi discount'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-gift text-danger me-2" style="width: 16px;"></i> Mã giảm giá (Coupons)
+                </button>
+                <button @click="addBlock('product_reviews')"
+                    x-show="'product reviews đánh giá hỏi đáp feedback comment rating stars'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-star-half-alt text-warning me-2" style="width: 16px;"></i> Đánh giá & Hỏi đáp
+                </button>
+
                 <button @click="addBlock('accordion')"
                     x-show="'faq accordion hỏi đáp collapse'.includes(search.toLowerCase())"
                     class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
@@ -75,6 +111,11 @@
                     x-show="'contact form mẫu liên hệ'.includes(search.toLowerCase())"
                     class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
                     <i class="fas fa-envelope-open-text text-primary me-2" style="width: 16px;"></i> Mẫu liên hệ
+                </button>
+                <button @click="addBlock('registration')"
+                    x-show="'registration registration form mẫu đăng ký dịch vụ nhận tin'.includes(search.toLowerCase())"
+                    class="btn btn-outline-light text-dark border p-2 text-start rounded-3 hover-shadow small fw-semibold">
+                    <i class="fas fa-file-signature text-danger me-2" style="width: 16px;"></i> Mẫu Đăng ký
                 </button>
                 <button @click="addBlock('office_map')"
                     x-show="'office map bản đồ hệ thống văn phòng địa chỉ'.includes(search.toLowerCase())"

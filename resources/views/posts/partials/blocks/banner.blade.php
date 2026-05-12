@@ -1,11 +1,7 @@
 @php
     $height = !empty($content['height']) ? $content['height'] : 'auto';
+    $height = is_numeric($height) ? $height . 'px' : $height;
     $heightStr = strtolower(trim($height));
-    $showOverlay = isset($content['show_overlay'])
-        ? filter_var($content['show_overlay'], FILTER_VALIDATE_BOOLEAN)
-        : true;
-    $overlayCss = 'linear-gradient(#03416699, #03416699)';
-
     $slider_items = !empty($content['items']) && is_array($content['items']) ? $content['items'] : [];
 
     if (!function_exists('isVideoUrl')) {
@@ -38,6 +34,7 @@
                     if ($youtube_id) {
                         return [
                             'type' => 'iframe',
+                            'id' => $youtube_id,
                             'url' =>
                                 'https://www.youtube.com/embed/' .
                                 $youtube_id .
@@ -52,6 +49,7 @@
                     if ($vimeo_id) {
                         return [
                             'type' => 'iframe',
+                            'id' => $vimeo_id,
                             'url' =>
                                 'https://player.vimeo.com/video/' .
                                 $vimeo_id .
@@ -64,7 +62,30 @@
         }
     }
 
+    if (!function_exists('getMediaThumbnail')) {
+        function getMediaThumbnail($url) {
+            $url = trim($url);
+            if (strpos($url, 'youtube.com') !== false || strpos($url, 'youtu.be') !== false) {
+                if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?|shorts)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $url, $match)) {
+                    return "https://img.youtube.com/vi/{$match[1]}/maxresdefault.jpg";
+                }
+            }
+            return $url; // Fallback to original for MP4 or direct links
+        }
+    }
+
     $bannerId = 'banner-' . uniqid();
+
+    $padding_top = $content['padding_top'] ?? '0px';
+    $padding_bottom = $content['padding_bottom'] ?? '0px';
+    $padding_left = $content['padding_left'] ?? '0px';
+    $padding_right = $content['padding_right'] ?? '0px';
+
+    // Auto-append px if numeric
+    $padding_top = is_numeric($padding_top) ? $padding_top . 'px' : $padding_top;
+    $padding_bottom = is_numeric($padding_bottom) ? $padding_bottom . 'px' : $padding_bottom;
+    $padding_left = is_numeric($padding_left) ? $padding_left . 'px' : $padding_left;
+    $padding_right = is_numeric($padding_right) ? $padding_right . 'px' : $padding_right;
 @endphp
 
 <style>
@@ -75,7 +96,8 @@
     }
 </style>
 
-<div class="banner-block w-100 position-relative {{ $bannerId }}" style="overflow: hidden;">
+<div class="banner-block w-100 position-relative {{ $bannerId }}" 
+     style="overflow: hidden; padding: {{ $padding_top }} {{ $padding_right }} {{ $padding_bottom }} {{ $padding_left }}; border-radius: 20px;">
     @if (count($slider_items) > 0)
         {{-- Banner Slider --}}
         @php $sliderId = 'banner-carousel-' . uniqid(); @endphp
@@ -86,140 +108,75 @@
             $sliderColClass = $hasRightItems ? 'col-lg-8' : 'col-12';
         @endphp
 
-        <div class="row g-2 {{ $heightStr !== 'auto' ? 'h-100' : '' }}">
-            <div class="{{ $sliderColClass }} {{ $heightStr !== 'auto' ? 'h-100' : '' }}">
-                <div id="{{ $sliderId }}" class="carousel slide w-100 {{ $heightStr !== 'auto' ? 'h-100' : '' }}"
-                    data-bs-ride="carousel">
-                    @if (count($slider_items) > 1)
-                        <div class="carousel-indicators mb-3 z-3">
-                            @foreach ($slider_items as $index => $item)
-                                <button type="button" data-bs-target="#{{ $sliderId }}"
-                                    data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}"
-                                    aria-current="{{ $index === 0 ? 'true' : 'false' }}"
-                                    aria-label="Slide {{ $index + 1 }}"></button>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    <div
-                        class="carousel-inner w-100 {{ $heightStr !== 'auto' ? 'h-100' : '' }} rounded-4 overflow-hidden">
+        <div class="container-fluid px-0 h-100">
+        <div class="row m-0 align-items-stretch {{ $heightStr !== 'auto' ? 'h-100' : '' }}">
+            <div class="{{ $sliderColClass }} {{ $heightStr !== 'auto' ? 'h-100' : '' }} p-0">
+                {{-- Swiper Slider --}}
+                <div class="swiper-container-{{ $bannerId }} swiper w-100 h-100 rounded-4 overflow-hidden shadow-sm" style="background-color: #034166;">
+                    <div class="swiper-wrapper">
                         @foreach ($slider_items as $index => $item)
-                            <div class="carousel-item w-100 {{ $heightStr !== 'auto' ? 'h-100' : '' }} {{ $index === 0 ? 'active' : '' }}"
-                                style="background-color: #034166;">
-
+                            <div class="swiper-slide w-100 {{ $heightStr !== 'auto' ? 'h-100' : '' }} position-relative transition-none">
                                 @php
                                     $mediaUrl = trim($item['image'] ?? '');
                                     $isVideo = isVideoUrl($mediaUrl);
                                 @endphp
 
                                 @if ($isVideo)
-                                    @php $videoData = parseVideoEmbed($mediaUrl); @endphp
+                                    @php $thumbUrl = getMediaThumbnail($mediaUrl); @endphp
+                                    {{-- Hiển thị ảnh thay vì video tự chạy trong slider --}}
+                                    <div class="position-absolute w-100 h-100 top-0 start-0 z-0"
+                                        style="background-image: url('{{ $thumbUrl }}'); background-size: cover; background-position: center;">
+                                    </div>
 
-                                    @if ($heightStr === 'auto')
-                                        <div class="w-100 position-relative text-center"
-                                            style="pointer-events: none; overflow: hidden; aspect-ratio: 16/9;">
-                                            @if ($videoData['type'] === 'video')
-                                                <video autoplay loop muted playsinline class="w-100 h-100"
-                                                    style="object-fit: cover;">
-                                                    <source src="{{ $videoData['url'] }}" type="video/mp4">
-                                                </video>
-                                            @else
-                                                <iframe src="{{ $videoData['url'] }}" class="w-100 h-100"
-                                                    style="border: 0; transform: scale(1.5);"
-                                                    allow="autoplay; fullscreen; picture-in-picture"
-                                                    allowfullscreen></iframe>
-                                            @endif
+                                    <a href="{{ $mediaUrl }}" 
+                                       data-fancybox="banner-video-gallery-{{ $bannerId }}"
+                                       class="position-absolute w-100 h-100 top-0 start-0 z-3" 
+                                       aria-label="Play Video">
+                                        <div class="position-absolute top-50 start-50 translate-middle bg-white text-secondary rounded-circle shadow-lg d-flex align-items-center justify-content-center" 
+                                             style="width: 80px; height: 80px; transition: all 0.3s;"
+                                             onmouseover="this.style.transform='translate(-50%, -50%) scale(1.1)'" 
+                                             onmouseout="this.style.transform='translate(-50%, -50%) scale(1)'">
+                                            <i class="fas fa-play fa-2x ms-1" style="color: #6c757d;"></i>
                                         </div>
-                                    @else
-                                        <div class="position-absolute w-100 h-100 top-0 start-0 z-0 text-center"
-                                            style="pointer-events: none; overflow: hidden;">
-                                            @if ($videoData['type'] === 'video')
-                                                <video autoplay loop muted playsinline class="w-100 h-100"
-                                                    style="object-fit: cover;">
-                                                    <source src="{{ $videoData['url'] }}" type="video/mp4">
-                                                </video>
-                                            @else
-                                                <iframe src="{{ $videoData['url'] }}" class="w-100 h-100"
-                                                    style="border: 0; transform: scale(1.5);"
-                                                    allow="autoplay; fullscreen; picture-in-picture"
-                                                    allowfullscreen></iframe>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    <!-- Lớp phủ cho video -->
-                                    @if ($showOverlay)
-                                        <div class="position-absolute w-100 h-100 top-0 start-0 z-1"
-                                            style="background-image: {{ $overlayCss }};"></div>
-                                    @endif
-                                @else
+                                    </a>
+                                @elseif (!empty($item['image']))
                                     @if ($heightStr === 'auto')
-                                        <!-- Hình ảnh tĩnh (chiều cao tự động) -->
                                         <img loading="lazy" src="{{ $mediaUrl }}" class="d-block w-100"
                                             style="height: auto; object-fit: cover;" alt="Banner">
-
-                                        @if ($showOverlay)
-                                            <!-- Lớp phủ cho ảnh auto -->
-                                            <div class="position-absolute w-100 h-100 top-0 start-0 z-1"
-                                                style="background-image: {{ $overlayCss }};"></div>
-                                        @endif
                                     @else
-                                        <!-- Hình ảnh tĩnh làm background (chiều cao cố định) -->
                                         <div class="position-absolute w-100 h-100 top-0 start-0 z-0"
-                                            style="background-image: {{ $showOverlay ? $overlayCss . ', ' : '' }}url('{{ $mediaUrl }}'); background-size: cover; background-position: center;">
+                                            style="background-image: url('{{ $mediaUrl }}'); background-size: cover; background-position: center;">
                                         </div>
                                     @endif
-                                @endif
 
-                                @if (!empty($item['text']) || !empty($item['link_text']))
-                                    <div class="carousel-caption d-flex h-100 flex-column justify-content-center align-items-center top-0 start-50 translate-middle-x z-2 w-100 px-3"
-                                        style="pointer-events: none;">
-                                        <div class="text-white text-center w-100 px-md-4"
-                                            style="pointer-events: auto; text-shadow: 0 4px 12px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.8);">
-                                            @if (!empty($item['text']))
-                                                <div class="text-white fw-bold mb-3"
-                                                    style="font-size: clamp(18px, 4vw, 35px); line-height: 1.2;">
-                                                    {!! $item['text'] !!}
-                                                </div>
-                                            @endif
-
-                                            @if (!empty($item['link_text']) && !empty($item['link_url']))
-                                                <a href="{{ $item['link_url'] }}"
-                                                    class="text-white text-decoration-none d-block"
-                                                    style="font-size: clamp(12px, 2vw, 18px); opacity: 0.95;">
-                                                    {!! $item['link_text'] !!}
-                                                </a>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    @if (!empty($item['link_url']))
+                                        <a href="{{ $item['link_url'] }}" class="position-absolute w-100 h-100 top-0 start-0 z-3" aria-label="Banner Link"></a>
+                                    @endif
                                 @endif
                             </div>
                         @endforeach
                     </div>
-
+                    
+                    {{-- Navigation & Pagination --}}
                     @if (count($slider_items) > 1)
-                        <button class="carousel-control-prev z-3" type="button" data-bs-target="#{{ $sliderId }}"
-                            data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon p-3 rounded-circle bg-dark bg-opacity-25"
-                                aria-hidden="true"></span>
-                            <span class="visually-hidden">Trước</span>
-                        </button>
-                        <button class="carousel-control-next z-3" type="button" data-bs-target="#{{ $sliderId }}"
-                            data-bs-slide="next">
-                            <span class="carousel-control-next-icon p-3 rounded-circle bg-dark bg-opacity-25"
-                                aria-hidden="true"></span>
-                            <span class="visually-hidden">Sau</span>
-                        </button>
+                        <div class="swiper-pagination swiper-pagination-{{ $bannerId }} mb-2"></div>
+                        <div class="swiper-button-prev swiper-button-prev-{{ $bannerId }} text-white bg-dark bg-opacity-25 rounded-circle p-4 ms-2 shadow-none" style="width: 44px; height: 44px; --swiper-navigation-size: 18px;"></div>
+                        <div class="swiper-button-next swiper-button-next-{{ $bannerId }} text-white bg-dark bg-opacity-25 rounded-circle p-4 me-2 shadow-none" style="width: 44px; height: 44px; --swiper-navigation-size: 18px;"></div>
                     @endif
                 </div>
             </div>
 
             @if ($hasRightItems)
-                <div class="col-12 col-lg-4 {{ $heightStr !== 'auto' ? 'h-lg-100' : '' }} mt-2 mt-lg-0">
-                    <div class="d-flex flex-column gap-2 h-100">
+                <div class="col-12 col-lg-4 {{ $heightStr !== 'auto' ? 'h-100' : '' }} mt-lg-0 p-0" style="padding-left: 6px !important; margin-top: 6px;">
+                    <style>
+                        @media (min-width: 992px) {
+                            .right-banner-col { margin-top: 0 !important; }
+                        }
+                    </style>
+                    <div class="right-banner-col d-flex flex-column {{ $heightStr !== 'auto' ? 'h-100' : '' }}" style="gap: 6px;">
                         @foreach ($rightItems as $ritem)
                             @if (!empty($ritem['image']))
-                                <div class="flex-grow-1 position-relative overflow-hidden rounded-4" style="min-height: 200px;">
+                                <div class="flex-grow-1 position-relative overflow-hidden rounded-4" style="flex: 1; min-height: 0;">
                                     @if (!empty($ritem['link']))
                                         <a href="{{ $ritem['link'] }}" class="d-block h-100">
                                     @endif
@@ -237,6 +194,7 @@
                 </div>
             @endif
         </div>
+        </div>
     @else
         {{-- Banner chưa có dữ liệu --}}
         <div class="d-flex w-100 h-100 align-items-center justify-content-center text-white bg-dark">
@@ -245,3 +203,64 @@
         </div>
     @endif
 </div>
+
+{{-- Fancybox 5 & Swiper 11 integration --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css" />
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<style>
+    .swiper-pagination-bullet { background: #fff; opacity: 0.5; }
+    .swiper-pagination-bullet-active { background: #fff; opacity: 1; width: 25px; border-radius: 5px; }
+    .swiper-button-prev::after, .swiper-button-next::after { font-size: 18px; font-weight: bold; }
+    .swiper-button-prev, .swiper-button-next { 
+        width: 44px; height: 44px; 
+    }
+</style>
+
+<script>
+    (function() {
+        document.addEventListener('DOMContentLoaded', function() {
+            const bannerId = '{{ $bannerId }}';
+            
+            // Initialize Swiper
+            const swiper = new Swiper(`.swiper-container-${bannerId}`, {
+                loop: true,
+                grabCursor: true, 
+                simulateTouch: true,
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: `.swiper-pagination-${bannerId}`,
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: `.swiper-button-next-${bannerId}`,
+                    prevEl: `.swiper-button-prev-${bannerId}`,
+                },
+                slidesPerView: 1,
+                spaceBetween: 0,
+            });
+
+            // Fancybox integration
+            Fancybox.bind(`[data-fancybox="banner-video-gallery-${bannerId}"]`, {
+                Toolbar: {
+                    display: {
+                        left: ["infobar"],
+                        middle: ["zoomIn", "zoomOut", "toggle1to1", "rotateCCW", "rotateCW", "flipX", "flipY"],
+                        right: ["slideshow", "fullscreen", "download", "thumbs", "close"],
+                    },
+                },
+                Html: {
+                    video: { autoplay: true, controls: true },
+                    youtube: { autoplay: 1, controls: 1, rel: 1, showinfo: 1 }
+                },
+                Thumbs: { autoStart: true },
+            });
+        });
+    })();
+</script>

@@ -1,6 +1,6 @@
 <template x-if="block.type === 'accordion'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <div class="d-flex justify-content-between align-items-center mb-2">
             <p class="small text-muted mb-0">Danh sách các mục FAQ/Accordion</p>
             <button @click="block.content.items.push({title: '', content: ''})"

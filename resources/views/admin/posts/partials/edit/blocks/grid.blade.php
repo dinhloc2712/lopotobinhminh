@@ -2,7 +2,7 @@
     <div class="mt-2">
         <div class="row g-3">
             {{-- Shared Block Styling --}}
-            @include('admin.posts.partials.edit.blocks.shared_styles')
+    {{-- removed shared_styles --}}
 
             {{-- Grid Settings --}}
             <div class="col-12">
@@ -38,61 +38,6 @@
                                         :class="block.content.columns_mobile == col ? 'btn-primary border-primary' : 'btn-light text-muted'"
                                         x-text="col + ' Cột'"></button>
                                 </template>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row g-3 mt-2">
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Đường viền ô (Border):</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" x-model="block.content.item_show_border" :id="'borderToggle-' + block.uid">
-                                <label class="form-check-label small" :for="'borderToggle-' + block.uid">Hiển thị viền</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4" x-show="block.content.item_show_border">
-                            <label class="form-label small text-muted mb-2">Màu viền:</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" x-model="block.content.item_border_color" class="form-control-color border-0 p-0 shadow-sm rounded-circle bg-transparent" style="width: 30px; height: 30px;">
-                                <input type="text" x-model="block.content.item_border_color" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="#dee2e6" style="font-size: 0.75rem;">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Bo góc ô (Border Radius - px):</label>
-                            <input type="number" x-model="block.content.item_border_radius" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="Mặc định: 16">
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mt-2">
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Căn lề (Text Align):</label>
-                            <select x-model="block.content.text_align" class="form-select form-select-sm border-0 bg-light shadow-sm">
-                                <option value="">Mặc định (Giữa)</option>
-                                <option value="start">Trái</option>
-                                <option value="center">Giữa</option>
-                                <option value="end">Phải</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Cỡ chữ Tiêu đề (px):</label>
-                            <input type="number" x-model="block.content.title_font_size" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="Ví dụ: 24">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Cỡ chữ Nội dung (px):</label>
-                            <input type="number" x-model="block.content.body_font_size" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="Ví dụ: 16">
-                        </div>
-                    </div>
-
-                    <div class="row g-3 mt-2">
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Kích thước Icon (px):</label>
-                            <input type="number" x-model="block.content.icon_size" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="Ví dụ: 32">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label small text-muted mb-2">Màu Icon:</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" x-model="block.content.icon_color" class="form-control-color border-0 p-0 shadow-sm rounded-circle bg-transparent" style="width: 30px; height: 30px;">
-                                <input type="text" x-model="block.content.icon_color" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="Mặc định (Primary)" style="font-size: 0.75rem;">
                             </div>
                         </div>
                     </div>
@@ -176,9 +121,17 @@
 
                                     <div class="col-md-4">
                                         <label class="small text-muted fw-bold mb-1">Màu nền ô (Bg Color)</label>
-                                        <div class="d-flex gap-2">
-                                            <input type="color" x-model="item.bg_color" class="form-control-color border-0 p-0 shadow-sm rounded-circle bg-transparent" style="width: 30px; height: 30px;">
-                                            <input type="text" x-model="item.bg_color" class="form-control form-control-sm border-0 bg-white shadow-sm" placeholder="#ffffff" style="font-size: 0.75rem;">
+                                        <div class="d-flex align-items-center bg-white rounded-3 p-1 px-2 border shadow-sm">
+                                            <input type="color" x-model="item.bg_color" class="form-control-color border-0 bg-transparent p-0" style="width: 24px; height: 24px;">
+                                            <input type="text" x-model="item.bg_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-2 flex-grow-1" placeholder="#ffffff">
+                                            <div class="d-flex gap-1">
+                                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(item.bg_color)" title="Copy màu">
+                                                    <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(item, 'bg_color')" title="Dán màu">
+                                                    <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

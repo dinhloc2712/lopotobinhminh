@@ -90,6 +90,12 @@ class PermissionSeeder extends Seeder
             'update_category' => 'Cập nhật chuyên mục',
             'delete_category' => 'Xóa chuyên mục',
 
+            // Permissions for Coupon
+            'view_coupon' => 'Xem mã giảm giá',
+            'create_coupon' => 'Thêm mã giảm giá',
+            'update_coupon' => 'Cập nhật mã giảm giá',
+            'delete_coupon' => 'Xóa mã giảm giá',
+
         ];
 
         foreach ($permissions as $name => $displayName) {

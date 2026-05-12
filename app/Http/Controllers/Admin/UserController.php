@@ -58,9 +58,9 @@ class UserController extends Controller
 
         $roles      = Role::all();
         $branches   = Branch::where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $departments = Department::where('is_active', true)->orderBy('name')->with('branch:id,name')->get(['id', 'name', 'branch_id']);
+        
 
-        return view('admin.users.index', compact('users', 'sortColumn', 'sortOrder', 'roles', 'branches', 'departments'));
+        return view('admin.users.index', compact('users', 'sortColumn', 'sortOrder', 'roles', 'branches'));
     }
 
     public function create()
@@ -68,8 +68,7 @@ class UserController extends Controller
         $this->authorize('create_user');
         $roles       = Role::all();
         $branches    = Branch::where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $departments = Department::where('is_active', true)->orderBy('name')->with('branch:id,name')->get(['id', 'name', 'branch_id']);
-        return view('admin.users.create', compact('roles', 'branches', 'departments'));
+        return view('admin.users.create', compact('roles', 'branches'));
     }
 
     public function store(Request $request)
@@ -88,7 +87,6 @@ class UserController extends Controller
             'code'          => 'nullable|string|unique:users',
             'start_date'    => 'nullable|date',
             'branch_id'     => 'nullable|exists:branches,id',
-            'department_id' => 'nullable|exists:departments,id',
             'degree'        => 'nullable|string|max:255',
             'major'         => 'nullable|string|max:255',
             // Business Info
@@ -119,8 +117,7 @@ class UserController extends Controller
         $this->authorize('update_user');
         $roles       = Role::all();
         $branches    = Branch::where('is_active', true)->orderBy('name')->get(['id', 'name']);
-        $departments = Department::where('is_active', true)->orderBy('name')->with('branch:id,name')->get(['id', 'name', 'branch_id']);
-        return view('admin.users.edit', compact('user', 'roles', 'branches', 'departments'));
+        return view('admin.users.edit', compact('user', 'roles', 'branches'));
     }
 
     public function update(Request $request, User $user)
@@ -140,7 +137,6 @@ class UserController extends Controller
             'code'          => ['nullable', 'string', Rule::unique('users')->ignore($user->id)],
             'start_date'    => 'nullable|date',
             'branch_id'     => 'nullable|exists:branches,id',
-            'department_id' => 'nullable|exists:departments,id',
             'degree'        => 'nullable|string|max:255',
             'major'         => 'nullable|string|max:255',
             // Business Info
@@ -229,7 +225,6 @@ class UserController extends Controller
     public function updateDepartment(Request $request, User $user)
     {
         $this->authorize('update_user');
-        $request->validate(['department_id' => 'nullable|exists:departments,id']);
         $user->update(['department_id' => $request->department_id ?: null]);
         return back()->with('success', 'Cập nhật phòng ban thành công.');
     }

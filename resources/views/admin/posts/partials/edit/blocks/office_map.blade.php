@@ -1,6 +1,6 @@
 <template x-if="block.type === 'office_map'">
     <div class="bg-white p-3 rounded-4 border mb-3">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <div class="d-flex align-items-center justify-content-between mb-3">
             <h6 class="mb-0 fw-bold text-dark small text-uppercase">
                 <i class="fas fa-map-marked-alt me-2 text-primary"></i>Cấu hình Bản đồ Văn phòng

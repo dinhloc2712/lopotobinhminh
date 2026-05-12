@@ -23,7 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return redirect()->route('admin.login');
 });
 
 // Post Frontend Routes (Moved to bottom to avoid conflicts)
@@ -33,12 +33,20 @@ Route::get('/', function () {
 Route::get('storage/{path}', [\App\Http\Controllers\Admin\UserController::class, 'servePublicStorageFile'])->where('path', '.*')->name('storage.fallback');
 
 // Auth Routes
-Route::get('login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('login', [AuthController::class, 'login'])->name('login.post');
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+// Registration
+Route::post('register', [\App\Http\Controllers\CustomerController::class, 'register'])->name('register');
 
 // Contact Form Submission
 Route::post('/contacts', [\App\Http\Controllers\ContactController::class, 'store'])->name('contacts.store');
+
+// Product Reviews (Frontend)
+Route::post('/reviews', [\App\Http\Controllers\ProductReviewController::class, 'store'])->name('frontend.reviews.store');
 
 // Admin Routes
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -112,7 +120,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('posts-blocks-source', [\App\Http\Controllers\Admin\PostController::class, 'blocksSource'])->name('posts.blocks-source');
     Route::post('posts/{post}/copy-blocks', [\App\Http\Controllers\Admin\PostController::class, 'copyBlocksFrom'])->name('posts.copy-blocks');
     Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
-
+    Route::resource('product-categories', \App\Http\Controllers\Admin\ProductCategoryController::class);
+    Route::resource('products', \App\Http\Controllers\Admin\ProductController::class);
+    Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
+    
     // Orders Management
     Route::resource('orders', \App\Http\Controllers\Admin\OrdersManagementController::class);
 

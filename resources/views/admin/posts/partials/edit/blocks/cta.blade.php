@@ -1,6 +1,6 @@
 <template x-if="block.type === 'cta'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <div class="row g-2">
         <div class="col-md-6">
             <input type="text" x-model="block.content.label"

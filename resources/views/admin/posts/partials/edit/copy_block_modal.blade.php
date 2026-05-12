@@ -133,7 +133,10 @@
                 '<span class="rounded-circle bg-white shadow-sm d-flex align-items-center justify-content-center" style="width:34px;height:34px;flex-shrink:0;">' +
                     '<i class="fas ' + (blockIcons[block.type] || 'fa-cube') + ' text-primary" style="font-size:0.85rem;"></i>' +
                 '</span>' +
-                '<span class="fw-semibold small">' + block.label + '</span>' +
+                '<div class="d-flex flex-column">' +
+                    '<span class="fw-semibold small">' + block.label + '</span>' +
+                    '<span class="text-muted" style="font-size:0.6rem;">ID: #' + block.id + '</span>' +
+                '</div>' +
                 '<span class="ms-auto badge bg-light text-secondary border" style="font-size:0.65rem;">Thứ tự ' + (block.order + 1) + '</span>' +
             '</label>';
         }).join('');

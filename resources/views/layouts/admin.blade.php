@@ -130,6 +130,40 @@
                     </li>
                 @endcan
 
+                <!-- Sản phẩm -->
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.product-categories.*') ? 'active' : '' }}"
+                        data-bs-toggle="collapse" href="#productSubmenu" role="button"
+                        aria-expanded="{{ request()->routeIs('admin.products.*') || request()->routeIs('admin.product-categories.*') ? 'true' : 'false' }}">
+                        <i class="fas fa-box-open"></i>
+                        <span>Sản phẩm</span>
+                        <i class="fas fa-chevron-down ms-auto arrow" style="font-size: 0.8rem; width: auto;"></i>
+                    </a>
+                    <div class="collapse {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.product-categories.*') ? 'show' : '' }}"
+                        id="productSubmenu" data-bs-parent="#sidebarAccordion">
+                        <ul class="nav flex-column collapse-menu">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.products.index') }}">
+                                    <i class="fas fa-boxes"></i> <span>Tất cả sản phẩm</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.product-categories.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.product-categories.index') }}">
+                                    <i class="fas fa-layer-group"></i> <span>Bộ sưu tập</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}"
+                                    href="{{ route('admin.coupons.index') }}">
+                                    <i class="fas fa-ticket-alt"></i> <span>Mã giảm giá</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
                 @can('view_orders')
                     <!-- Quản lý đơn hàng -->
                     <li class="nav-item">
@@ -225,7 +259,7 @@
                 </div>
             </a>
 
-            <form action="{{ route('logout') }}" method="POST" class="mt-2">
+            <form action="{{ route('admin.logout') }}" method="POST" class="mt-2">
                 @csrf
                 <button type="submit" class="nav-link w-100 bg-transparent border-0 text-start">
                     <i class="fas fa-sign-out-alt text-danger"></i>
@@ -472,6 +506,27 @@
                 title: "Vui lòng kiểm tra lại dữ liệu nhập vào."
             });
         @endif
+    </script>
+    <script src="https://cdn.tiny.cloud/1/3lj129fowr521a21ymimv9qyjwxyzezc86feaj8brb3fetc0/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if(document.querySelector('.tinymce-editor')) {
+                tinymce.init({
+                    selector: '.tinymce-editor',
+                    height: 400,
+                    menubar: false,
+                    plugins: [
+                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                        'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                    ],
+                    toolbar: 'undo redo | blocks formatselect | bold italic backcolor | ' +
+                             'alignleft aligncenter alignright alignjustify | ' +
+                             'bullist numlist outdent indent | removeformat | help',
+                    content_style: 'body { font-family:Inter,sans-serif; font-size:14px }'
+                });
+            }
+        });
     </script>
     @yield('scripts')
     @stack('scripts')

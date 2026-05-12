@@ -5,7 +5,7 @@
     ">
         <div class="row g-3">
             {{-- Shared Block Styling --}}
-            @include('admin.posts.partials.edit.blocks.shared_styles')
+    {{-- removed shared_styles --}}
 
             {{-- Nội dung Hero --}}
             <div class="col-12">
@@ -91,16 +91,32 @@
 
                         <div class="col-md-2">
                             <label class="small text-muted fw-bold mb-1">Màu nền Nút</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" x-model="block.content.btn_bg_color" class="form-control-color border-0 p-0 shadow-sm rounded bg-transparent" style="width: 32px; height: 32px;">
-                                <input type="text" x-model="block.content.btn_bg_color" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="#004a80">
+                            <div class="d-flex gap-1 align-items-center bg-light p-1 rounded-2 shadow-sm">
+                                <input type="color" x-model="block.content.btn_bg_color" class="form-control-color border-0 p-0 bg-transparent" style="width: 24px; height: 24px;">
+                                <input type="text" x-model="block.content.btn_bg_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-1 flex-grow-1" style="width: 60px;" placeholder="#004a80">
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(block.content.btn_bg_color)" title="Copy màu">
+                                        <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(block.content, 'btn_bg_color')" title="Dán màu">
+                                        <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <label class="small text-muted fw-bold mb-1">Màu chữ Nút</label>
-                            <div class="d-flex gap-2">
-                                <input type="color" x-model="block.content.btn_text_color" class="form-control-color border-0 p-0 shadow-sm rounded bg-transparent" style="width: 32px; height: 32px;">
-                                <input type="text" x-model="block.content.btn_text_color" class="form-control form-control-sm border-0 bg-light shadow-sm" placeholder="#ffffff">
+                            <div class="d-flex gap-1 align-items-center bg-light p-1 rounded-2 shadow-sm">
+                                <input type="color" x-model="block.content.btn_text_color" class="form-control-color border-0 p-0 bg-transparent" style="width: 24px; height: 24px;">
+                                <input type="text" x-model="block.content.btn_text_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-1 flex-grow-1" style="width: 60px;" placeholder="#ffffff">
+                                <div class="d-flex gap-1">
+                                    <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(block.content.btn_text_color)" title="Copy màu">
+                                        <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(block.content, 'btn_text_color')" title="Dán màu">
+                                        <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

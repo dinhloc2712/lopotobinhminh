@@ -1,6 +1,6 @@
 <template x-if="block.type === 'slider'">
     <div class="mt-2 text-start">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         
         <div class="row g-2 mb-3 align-items-end">
             <div class="col-md-2">
@@ -51,20 +51,36 @@
                 </select>
             </div>
             
-            <div class="col-md-3 mt-3">
+            <div class="col-md-5 mt-3">
                 <div class="d-flex gap-3">
-                    <div>
+                    <div style="flex: 1;">
                         <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size: 0.65rem;">Màu Tiêu đề</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="color" x-model="block.content.title_color" class="form-control form-control-sm form-control-color border-0 p-1 bg-light" style="width: 35px; height: 32px;" title="Màu Tiêu đề">
-                            <button type="button" class="btn btn-sm btn-link text-muted p-0 text-decoration-none" @click="block.content.title_color = null" x-show="block.content.title_color" style="font-size: 0.7rem;"><i class="fas fa-times"></i></button>
+                        <div class="d-flex align-items-center bg-light rounded-3 p-1 px-2 border">
+                            <input type="color" x-model="block.content.title_color" class="form-control-color border-0 bg-transparent p-0" style="width: 24px; height: 24px;">
+                            <input type="text" x-model="block.content.title_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-1 flex-grow-1" style="width: 50px;" placeholder="#ffffff">
+                            <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(block.content.title_color)" title="Copy màu">
+                                    <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(block.content, 'title_color')" title="Dán màu">
+                                    <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div>
+                    <div style="flex: 1;">
                         <label class="form-label small fw-bold text-muted text-uppercase mb-1" style="font-size: 0.65rem;">Màu Mô tả</label>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="color" x-model="block.content.desc_color" class="form-control form-control-sm form-control-color border-0 p-1 bg-light" style="width: 35px; height: 32px;" title="Màu Mô tả">
-                            <button type="button" class="btn btn-sm btn-link text-muted p-0 text-decoration-none" @click="block.content.desc_color = null" x-show="block.content.desc_color" style="font-size: 0.7rem;"><i class="fas fa-times"></i></button>
+                        <div class="d-flex align-items-center bg-light rounded-3 p-1 px-2 border">
+                            <input type="color" x-model="block.content.desc_color" class="form-control-color border-0 bg-transparent p-0" style="width: 24px; height: 24px;">
+                            <input type="text" x-model="block.content.desc_color" class="form-control form-control-sm border-0 bg-transparent p-0 fs-7 px-1 flex-grow-1" style="width: 50px;" placeholder="#ffffff">
+                            <div class="d-flex gap-1">
+                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="copyColor(block.content.desc_color)" title="Copy màu">
+                                    <i class="fas fa-copy" style="font-size: 0.6rem;"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-light p-0 px-1 border-0" @click="pasteColor(block.content, 'desc_color')" title="Dán màu">
+                                    <i class="fas fa-paste" style="font-size: 0.6rem;"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

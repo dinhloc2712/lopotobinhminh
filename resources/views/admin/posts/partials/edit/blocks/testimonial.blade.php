@@ -1,6 +1,6 @@
 <template x-if="block.type === 'testimonial'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <div class="bg-light p-3 rounded-4 border">
             {{-- Danh sách đánh giá --}}
             <div class="d-flex justify-content-between align-items-center mb-2">

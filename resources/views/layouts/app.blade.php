@@ -44,6 +44,7 @@
             color: #2D3748;
             line-height: 1.6;
             overflow-x: hidden;
+            background-color: #F5F5F5;
         }
 
         h1,
@@ -92,6 +93,11 @@
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Ensure box-shadow is never clipped by section wrapper */
+        section.block-section {
+            overflow: visible !important;
         }
     </style>
     @yield('styles')

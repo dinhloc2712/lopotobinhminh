@@ -14,6 +14,9 @@ class PostBlock extends Model
 
     public function getStyleAttribute()
     {
+        if (in_array($this->type, ['product_description', 'product_detail', 'coupons'])) {
+            return "";
+        }
         $content = $this->content;
         $bg_color = $content['bg_color'] ?? null;
         $bg_opacity = $content['bg_opacity'] ?? 1;

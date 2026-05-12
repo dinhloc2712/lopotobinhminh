@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class Product extends Model
 {
     protected $fillable = [
-        'category_id', 'name', 'slug', 'description', 
+        'category_id', 'name', 'description', 
         'price', 'sale_price', 'stock', 'sold', 
         'thumbnail', 'images', 'status'
     ];
@@ -24,11 +24,6 @@ class Product extends Model
     protected static function boot()
     {
         parent::boot();
-        static::creating(function ($product) {
-            if (!$product->slug) {
-                $product->slug = Str::slug($product->name);
-            }
-        });
     }
 
     public function category()
@@ -69,5 +64,47 @@ class Product extends Model
             return round((($this->price - $this->sale_price) / $this->price) * 100);
         }
         return 0;
+    }
+
+    /**
+     * Get approved reviews for product.
+     */
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    /**
+     * Get average rating score.
+     */
+    public function getAverageRatingAttribute()
+    {
+        return round($this->reviews()->avg('rating') ?: 0, 1);
+    }
+
+    /**
+     * Get total number of reviews.
+     */
+    public function getReviewCountAttribute()
+    {
+        return $this->reviews()->count();
+    }
+
+    /**
+     * Get distribution of stars (1-5).
+     */
+    public function getReviewDistribution()
+    {
+        $counts = $this->reviews()
+            ->selectRaw('rating, count(*) as total')
+            ->groupBy('rating')
+            ->pluck('total', 'rating')
+            ->all();
+
+        $distribution = [];
+        for ($i = 1; $i <= 5; $i++) {
+            $distribution[$i] = $counts[$i] ?? 0;
+        }
+        return $distribution;
     }
 }

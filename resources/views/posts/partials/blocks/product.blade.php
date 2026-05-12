@@ -3,7 +3,7 @@
     $category_id = !empty($content['category_id']) ? $content['category_id'] : null;
     $columns = !empty($content['items_per_row']) ? (int)$content['items_per_row'] : 4;
     
-    $query = \App\Models\Product::where('status', 'published');
+    $query = \App\Models\Product::whereIn('status', ['published', 'active']);
     
     if ($category_id) {
         $query->where('category_id', $category_id);
@@ -18,9 +18,7 @@
     elseif ($columns == 2) $colClass = 'col-lg-6 col-md-6';
 @endphp
 
-@include('posts.partials.blocks.common_styles')
-
-<div class="product-block py-4" style="{{ $commonBlockStyle }}">
+<div class="product-block py-4" style="@include('posts.partials.blocks.common_styles')">
     <div class="{{ !empty($content['full_width']) ? 'container-fluid px-4' : 'container' }}">
         <div class="row g-3 g-md-4">
             @forelse($products as $product)
@@ -30,7 +28,7 @@
                         
                         {{-- Thumbnail --}}
                         <div class="position-relative overflow-hidden" style="aspect-ratio: 1/1;">
-                            <img src="{{ $product->thumbnail ?? 'https://placehold.co/400x400?text=Product' }}" 
+                            <img src="{{ $product->thumbnail ? asset('storage/' . $product->thumbnail) : 'https://placehold.co/400x400?text=Product' }}" 
                                  class="w-100 h-100" style="object-fit: cover; transition: transform 0.5s;"
                                  onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                             

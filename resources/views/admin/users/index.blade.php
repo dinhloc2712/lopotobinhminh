@@ -181,32 +181,7 @@
                                 @endif
                             @endcan
                         </td>
-
-                        {{-- Cột: Phòng ban --}}
-                        <td>
-                            @can('update_user')
-                                <form action="{{ route('admin.users.update_department', $user) }}" method="POST" class="ts-submit-form">
-                                    @csrf @method('PATCH')
-                                    <select name="department_id" class="tomselect-inline">
-                                        <option value="">— Chưa chọn —</option>
-                                        @foreach($departments as $dept)
-                                            <option value="{{ $dept->id }}" {{ $user->department_id == $dept->id ? 'selected' : '' }}
-                                                data-branch="{{ $dept->branch_id }}">
-                                                {{ $dept->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </form>
-                            @else
-                                @if($user->department)
-                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2">
-                                        <i class="fas fa-sitemap fa-xs me-1"></i>{{ $user->department->name }}
-                                    </span>
-                                @else
-                                    <span class="text-muted small fst-italic">—</span>
-                                @endif
-                            @endcan
-                        </td>
+                        
                         <td>
                             @if($user->is_active)
                                 <span class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill" style="font-weight: 600; font-size: 0.75rem;">Hoạt động</span>

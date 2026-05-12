@@ -1,6 +1,6 @@
 <template x-if="block.type === 'video'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         
         <div class="mb-2">
             <span class="small fw-bold text-muted text-uppercase">Cài đặt Video</span>

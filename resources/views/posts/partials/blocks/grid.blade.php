@@ -15,52 +15,27 @@
                     $columns_mobile = $columns_mobile > 0 ? $columns_mobile : 1;
                     $cols_mobile = 12 / $columns_mobile;
 
-                    $bgStyle = '';
+                    // Standardized premium layout values
+                    $borderRadius = '16px';
+                    $borderColor = '#e2e8f0';
+                    $textAlign = 'center';
+                    
+                    $bgStyle = "border: 1px solid {$borderColor}; border-radius: {$borderRadius}; ";
+                    
                     if (!empty($item['bg_color']) && $item['bg_color'] !== '#ffffff') {
                         $bgStyle .= 'background-color: ' . $item['bg_color'] . ' !important; ';
                     }
                     if (!empty($item['bg_image'])) {
-                        // Sử dụng contain để ảnh giữ nguyên tỷ lệ (không méo/co) và hiển thị trọn vẹn (không bị cắt)
-                        $bgStyle .=
-                            "background-image: url('" .
-                            $item['bg_image'] .
-                            "'); background-size: contain; background-position: center; background-repeat: no-repeat; ";
+                        $bgStyle .= "background-image: url('" . $item['bg_image'] . "'); background-size: cover; background-position: center; ";
                     }
-
-                    if (!empty($item['width'])) {
-                        $bgStyle .= 'width: ' . $item['width'] . '; margin: 0 auto; ';
-                    }
-
-                    $showBorder = !empty($content['item_show_border']);
-                    $borderColor = !empty($content['item_border_color']) ? $content['item_border_color'] : '#dee2e6';
-                    $borderRadius =
-                        isset($content['item_border_radius']) && $content['item_border_radius'] !== ''
-                            ? $content['item_border_radius'] . 'px'
-                            : '16px';
-
-                    if ($showBorder) {
-                        $bgStyle .= "border: 1px solid {$borderColor}; ";
-                    } else {
-                        $bgStyle .= 'border: none; ';
-                    }
-
-                    $bgStyle .= "border-radius: {$borderRadius}; ";
-
-                    $textAlign = !empty($content['text_align']) ? $content['text_align'] : 'center';
 
                     $alignClass = 'mx-auto';
-                    if ($textAlign === 'start') {
-                        $alignClass = 'ms-0 me-auto';
-                    } elseif ($textAlign === 'end') {
-                        $alignClass = 'ms-auto me-0';
-                    }
+                    $iconSize = '48px';
+                    $iconBoxSize = '80px';
+                    $iconColor = '#004a80';
 
-                    $iconSize = !empty($content['icon_size']) ? $content['icon_size'] . 'px' : '';
-                    $iconBoxSize = !empty($content['icon_size']) ? intval($content['icon_size']) * 2.2 . 'px' : '70px';
-                    $iconColor = !empty($content['icon_color']) ? $content['icon_color'] : '';
-
-                    $titleFSValue = !empty($content['title_font_size']) ? $content['title_font_size'] . 'px' : '1.5rem';
-                    $bodyFSValue = !empty($content['body_font_size']) ? $content['body_font_size'] . 'px' : '1rem';
+                    $titleFSValue = '1.25rem';
+                    $bodyFSValue = '1rem';
                 @endphp
                 <style>
                     @media (max-width: 767.98px) {

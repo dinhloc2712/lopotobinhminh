@@ -6,7 +6,7 @@
             window.activeBlockUidForImage = null;
         }
     ">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
 
         <div class="row g-2 mb-3">
             <div class="col-md">

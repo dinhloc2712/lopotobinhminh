@@ -125,16 +125,30 @@ class PostController extends Controller
     {
         $blocksData = $request->input('blocks', []);
         
-        // Delete blocks not in the list if needed, but usually we just sync
+        // Delete existing blocks to sync
         $post->blocks()->delete();
+
+        $mainThumbnail = null;
 
         foreach ($blocksData as $index => $data) {
             PostBlock::create([
                 'post_id' => $post->id,
-                'type' => $data['type'],
+                'type'    => $data['type'],
                 'content' => $data['content'],
-                'order' => $index
+                'style'   => null, // Clear legacy inline styles (padding, margin, etc.)
+                'order'   => $index
             ]);
+
+            // Promote post_thumbnail from Text block to main Post record
+            if ($data['type'] === 'text' && !empty($data['content']['post_thumbnail'])) {
+                $mainThumbnail = $data['content']['post_thumbnail'];
+            }
+        }
+
+        // Sync main thumbnail if found in blocks
+        if ($mainThumbnail) {
+            $post->thumbnail = $mainThumbnail;
+            $post->save();
         }
 
         return response()->json(['success' => true]);
@@ -160,6 +174,8 @@ class PostController extends Controller
             'cta' => 'Nút kêu gọi (CTA)', 'marquee' => 'Băng chuyền',
             'globe' => 'Địa cầu 3D', 'contact_form' => 'Mẫu liên hệ',
             'office_map' => 'Hệ thống văn phòng (Bản đồ)',
+            'product_detail' => 'Chi tiết sản phẩm',
+            'product_description' => 'Mô tả chi tiết SP',
             'spacer' => 'Khoảng cách', 'divider' => 'Đường kẻ',
         ];
 

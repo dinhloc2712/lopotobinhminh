@@ -1,6 +1,6 @@
 <template x-if="block.type === 'pricing'">
     <div class="mt-2">
-        @include('admin.posts.partials.edit.blocks.shared_styles')
+{{-- removed shared_styles --}}
         <div class="d-flex justify-content-between align-items-center mb-2">
             <p class="small text-muted mb-0">Thiết lập bảng giá</p>
             <button
